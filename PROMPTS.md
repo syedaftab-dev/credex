@@ -1,7 +1,7 @@
 # PROMPTS.md
 
 ## 1. Audit Summary Prompt
-This prompt is used in `/app/api/audit/route.ts` to generate the personalized savings paragraph.
+This prompt is used in `/app/api/audit/route.ts` to generate the personalized savings paragraph via **Google Gemini (Free Tier)** or **Anthropic Claude**.
 
 ### The Prompt
 ```
