@@ -10,14 +10,14 @@ AI costs are spiraling. Startups are paying for Cursor, Claude, ChatGPT, and Cop
 2. **Audit Engine**: Logic that evaluates plan right-sizing and tool redundancy.
 3. **Audit Results**: Detailed breakdown with a "Hero Metric" for total savings.
 4. **AI Summary**: Personalized saving strategy generated via Claude 3 Haiku.
-5. **Lead Capture**: Integrated email capture with honeypot and Resend integration.
+5. **Lead Capture**: Integrated email capture with honeypot and **Nodemailer** (Free/Quick SMTP).
 6. **Shareable URL**: Public results page with dynamic OG images for social sharing.
 
 ## Tech Stack
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS
 - **UI/UX**: GSAP, Framer Motion, Lenis (Smooth Scroll), Lucide React
 - **Backend**: Supabase (Database), Resend (Transactional Email)
-- **AI**: Anthropic Claude API (Claude 3 Haiku)
+- **AI**: Google AI Studio API
 - **Deployment**: Vercel
 
 ## Quick Start
@@ -31,7 +31,7 @@ AI costs are spiraling. Startups are paying for Cursor, Claude, ChatGPT, and Cop
 1. **Neo-Brutalist Aesthetic**: Chose high-contrast, "chunky" UI to stand out in the crowded B2B SaaS market and convey a "direct/honest" brand voice.
 2. **Pure Logic Engine**: Built the audit logic as a side-effect-free function to ensure 100% testability and reliability.
 3. **LocalStorage Persistence**: Implemented a `useLocalStorage` hook so founders don't lose their progress if they close the tab while looking up their invoices.
-4. **Haiku for Summaries**: Used Claude 3 Haiku for the AI summary to ensure sub-1s latency on the results page.
+4. **Gemini for Summaries**: Used Gemini for the AI summary to ensure sub-1s latency on the results page.
 5. **Public Share IDs**: Used 12-character `nanoid` for audit IDs to allow for public sharing without predictable URLs.
 
 ## Live URL

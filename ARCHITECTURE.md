@@ -23,6 +23,7 @@ graph TD
 ```
 
 ## Stack Rationale
+- **Transactional Email**: Nodemailer (via Gmail SMTP) for free, quick, and domain-agnostic delivery.
 - **Next.js 15**: Chosen for Server Components (SEO for share pages) and API routes (handling AI/DB secrets).
 - **Supabase**: Provides a fast, scalable Postgres backend with a generous free tier for lead generation.
 - **Tailwind + shadcn/ui**: Allowed for rapid development of a custom design system while maintaining accessibility.
