@@ -104,6 +104,12 @@ export default function ResultsPage() {
 
       <ResultsHero result={data.results} />
 
+      <div className="mt-8 flex justify-end no-print">
+        <NeoButton variant="white" size="sm" onClick={() => window.print()}>
+          Download PDF Report
+        </NeoButton>
+      </div>
+
       {/* AI SUMMARY */}
       <div className="mt-16">
         <NeoCard color="bg-white" className="border-purple-500 shadow-[8px_8px_0px_0px_#a855f7]">
@@ -120,7 +126,7 @@ export default function ResultsPage() {
       <ToolBreakdownTable result={data.results} />
 
       {/* LEAD CAPTURE SECTION */}
-      <div className="mt-24 text-center">
+      <div className="mt-24 text-center lead-capture-section no-print">
         <NeoCard color="bg-black" className="text-white py-16">
           {submitted ? (
             <div className="space-y-6">
@@ -138,7 +144,7 @@ export default function ResultsPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email" 
-                  className="bg-white border-4 border-[#ccff00] p-5 text-black font-bold uppercase rounded-xl focus:outline-none"
+                  className="bg-white border-4 border-[#ccff00] p-5 text-black font-bold rounded-xl focus:outline-none"
                   required
                 />
                 <NeoButton 

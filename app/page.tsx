@@ -50,9 +50,11 @@ export default function LandingPage() {
               Start Free Audit <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </NeoButton>
           </Link>
-          <NeoButton variant="white" size="lg">
-            See Example Report
-          </NeoButton>
+          <Link href="/share/demo-audit">
+            <NeoButton variant="white" size="lg">
+              See Example Report
+            </NeoButton>
+          </Link>
         </div>
 
         {/* Floating Icons */}

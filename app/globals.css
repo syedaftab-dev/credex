@@ -124,6 +124,21 @@
   body {
     @apply bg-background text-foreground;
   }
+  @media print {
+    .no-print, nav, footer, .lead-capture-section {
+      display: none !important;
+    }
+    body {
+      background: white !important;
+      padding: 0 !important;
+    }
+    .max-w-6xl {
+      max-width: 100% !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 20px !important;
+    }
+  }
   html {
     @apply font-sans;
   }

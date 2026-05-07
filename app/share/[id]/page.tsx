@@ -8,6 +8,11 @@ import { supabase, hasSupabaseKeys } from "@/lib/supabase";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { NeoCard, NeoButton, NeoBadge } from "@/components/ui/NeoBrutalism";
 import Link from "next/link";
+import Head from "next/head";
+
+// This is a client component, so we can't export metadata directly in Next.js 15 App Router easily if it's 'use client'
+// But we can use a separate layout or just keep it simple.
+// For now, I'll add the Head tags for the browser to pick up.
 
 export default function SharePage() {
   const { id } = useParams();
@@ -16,7 +21,8 @@ export default function SharePage() {
 
   useEffect(() => {
     async function fetchResult() {
-      if (!hasSupabaseKeys) {
+      if (!hasSupabaseKeys || id === "demo-audit") {
+        // Mock data for demo if no keys or demo requested
         setData({
           results: {
             perTool: [
@@ -72,6 +78,14 @@ export default function SharePage() {
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-6">
+      {data && (
+        <>
+          <title>CredX Audit — ${data.results.totalAnnualSavings.toLocaleString()} Savings</title>
+          <meta property="og:title" content={`AI Spend Audit: Found $${data.results.totalAnnualSavings.toLocaleString()} in savings!`} />
+          <meta property="og:image" content={`/api/og?savings=${data.results.totalAnnualSavings}`} />
+          <meta property="og:description" content={data.summary} />
+        </>
+      )}
       <div className="mb-12 flex justify-between items-center">
         <NeoBadge color="bg-black text-[#ccff00]">Public Audit Report</NeoBadge>
         <Link href="/audit">

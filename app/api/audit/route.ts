@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runAudit, ToolEntry } from "@/lib/audit-engine";
 import { nanoid } from "nanoid";
-import { supabaseAdmin, hasSupabaseKeys } from "@/lib/supabase";
+import { supabaseAdmin, hasSupabaseAdminKey } from "@/lib/supabase";
 import Anthropic from "@anthropic-ai/sdk";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Save to Supabase
-    if (hasSupabaseKeys) {
+    if (hasSupabaseAdminKey && supabaseAdmin) {
       const { error } = await supabaseAdmin
         .from('audits')
         .insert([{

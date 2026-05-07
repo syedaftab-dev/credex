@@ -5,6 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "CredX — AI Spend Audit",
   description: "Stop wasting money on AI subscriptions. Audit your spend and find savings in minutes.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   openGraph: {
     title: "CredX — AI Spend Audit",
     description: "Audit your startup's AI spend on Cursor, Claude, ChatGPT, and more.",
