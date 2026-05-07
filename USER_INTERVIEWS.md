@@ -1,4 +1,4 @@
-# USER_INTERVIEWS.md
+# USER_INTERVIEWS
 
 ## Interview 1: Alex R., CTO @ Fintech Seed Startup (12 devs)
 **Direct Quote**: "I didn't realize half the team was expensing Claude Pro on their personal cards while we already have a ChatGPT Team account. It's only $20, but it adds up to $3,000/year across the whole team that just... disappears."

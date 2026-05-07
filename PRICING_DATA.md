@@ -1,4 +1,4 @@
-# PRICING_DATA.md
+# PRICING_DATA
 
 All pricing data verified as of **May 2026**.
 

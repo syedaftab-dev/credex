@@ -1,4 +1,4 @@
-# TESTS.md
+# TESTS
 
 ## Test Suite Overview
 The core logic of the CredX AI Spend Audit tool is tested via Vitest. The focus is on the **Audit Engine** to ensure that financial recommendations are accurate and defensible.
