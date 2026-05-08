@@ -48,3 +48,10 @@
 **What I learned:** Shipping a product in 7 days is about prioritizing the "Audit Logic" over "Fancy Features."
 **Blockers:** None.
 **Plan for tomorrow:** Launch on Product Hunt.
+
+## Day 8 — 2026-05-08
+**Hours worked:** 5
+**What I did:** Launched on Product Hunt. Monitored initial traffic and fixed two high-priority UI bugs related to mobile overflow.
+**What I learned:** Mobile users interact with the audit wizard differently; simplified the range slider for better touch precision.
+**Blockers:** None.
+**Plan for tomorrow:** Address user feedback and refine the AI summary logic.
