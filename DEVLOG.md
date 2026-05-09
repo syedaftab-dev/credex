@@ -55,3 +55,10 @@
 **What I learned:** Mobile users interact with the audit wizard differently; simplified the range slider for better touch precision.
 **Blockers:** None.
 **Plan for tomorrow:** Address user feedback and refine the AI summary logic.
+
+## Day 9 — 2026-05-09
+**Hours worked:** 4
+**What I did:** Refined the AI summary prompt to provide more actionable cost-saving tips. Improved SEO meta tags for better social sharing.
+**What I learned:** Providing specific dollar amounts in the AI summary increases user retention on the results page.
+**Blockers:** None.
+**Plan for tomorrow:** Optimize performance for larger data sets.
