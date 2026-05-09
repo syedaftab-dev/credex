@@ -36,3 +36,9 @@ AI costs are spiraling. Startups are paying for Cursor, Claude, ChatGPT, and Cop
 
 ## Live URL
 [https://credex-audit.vercel.app](https://credex-audit.vercel.app)
+
+## FAQ
+### Is my data secure?
+Yes, we do not store your raw financial data. We only process it to generate the audit report.
+### Which AI models are supported?
+Currently, we support Cursor, Claude, and ChatGPT pricing tiers.
