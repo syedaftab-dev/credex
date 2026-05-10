@@ -35,7 +35,7 @@ export function runAudit(entries: ToolEntry[]): AuditResult {
   const perTool: ToolAuditResult[] = [];
   let totalCurrentMonthly = 0;
 
-  // Track use cases to find redundancies
+  // Track use cases to identify potential tool redundancies
   const useCaseMap: Record<string, string[]> = {};
 
   entries.forEach((entry) => {
@@ -56,7 +56,7 @@ export function runAudit(entries: ToolEntry[]): AuditResult {
 
     const currentPlan = tool.plans.find((p) => p.id === entry.planId);
     
-    // Track use cases to find redundancies
+    // Track use cases to identify potential tool redundancies
     const peers = useCaseMap[entry.useCase] || [];
     let isRedundant = false;
     if (peers.length > 1) {
