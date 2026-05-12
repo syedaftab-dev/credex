@@ -36,4 +36,4 @@ jobs:
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-        NEXT_PUBLIC_APP_URL: https://credex-audit.vercel.app
+        NEXT_PUBLIC_APP_URL: https://credex-mocha.vercel.app/
