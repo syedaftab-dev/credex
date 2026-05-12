@@ -35,10 +35,10 @@ AI costs are spiraling. Startups are paying for Cursor, Claude, ChatGPT, and Cop
 5. **Public Share IDs**: Used 12-character `nanoid` for audit IDs to allow for public sharing without predictable URLs.
 
 ## Live URL
-[https://credex-audit.vercel.app](https://credex-audit.vercel.app)
+[https://credex-mocha.vercel.app/](https://credex-mocha.vercel.app/)
 
 ## FAQ
 ### Is my data secure?
 Yes, we do not store your raw financial data. We only process it to generate the audit report.
 ### Which AI models are supported?
-Currently, we support Cursor, Claude, and ChatGPT pricing tiers.
+Currently, we support Cursor, Claude, WindSurf,Github Copilot and ChatGPT pricing tiers.
