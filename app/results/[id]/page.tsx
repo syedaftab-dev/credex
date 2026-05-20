@@ -40,6 +40,7 @@ export default function ResultsPage() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+  const [notifyOnChange, setNotifyOnChange] = useState(true);
 
   useEffect(() => {
     async function fetchResult() {
@@ -82,7 +83,7 @@ export default function ResultsPage() {
       await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, auditId: id, website: "" }),
+        body: JSON.stringify({ email, auditId: id, website: "", notifyOnChange }),
       });
       setSubmitted(true);
     } catch (e) {
@@ -164,6 +165,14 @@ export default function ResultsPage() {
             <div className="space-y-6">
               <div className="text-6xl font-black text-[#ccff00]">DONE!</div>
               <p className="text-xl font-bold uppercase italic">Report sent to {email}. Check your inbox.</p>
+              {notifyOnChange && (
+                <p className="text-sm opacity-50">
+                  You&apos;ll be notified if AI pricing changes affect your stack.{" "}
+                  <a href={`/unsubscribe?email=${encodeURIComponent(email)}`} className="underline text-[#ccff00] hover:opacity-80">
+                    Manage notifications
+                  </a>
+                </p>
+              )}
             </div>
           ) : (
             <>
@@ -178,6 +187,24 @@ export default function ResultsPage() {
                   className="bg-white border-4 border-[#ccff00] p-5 text-black font-bold rounded-xl focus:outline-none"
                   required
                 />
+                {/* Explicit opt-in checkbox for pricing change notifications */}
+                <label className="flex items-start gap-3 text-left cursor-pointer group">
+                  <div className="relative mt-1 shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={notifyOnChange}
+                      onChange={(e) => setNotifyOnChange(e.target.checked)}
+                      className="sr-only"
+                    />
+                    <div className={`w-5 h-5 border-3 border-white rounded flex items-center justify-center transition-colors ${notifyOnChange ? 'bg-[#ccff00] border-[#ccff00]' : 'bg-transparent'}`}>
+                      {notifyOnChange && <span className="text-black text-xs font-black">✓</span>}
+                    </div>
+                  </div>
+                  <span className="text-sm font-bold opacity-70 leading-snug">
+                    Notify me if AI tool pricing changes affect my savings estimate.
+                    <span className="block text-xs opacity-60 mt-0.5">One email per change event. Unsubscribe anytime.</span>
+                  </span>
+                </label>
                 <NeoButton variant="lime" size="lg" type="submit" disabled={isSubmittingLead}>
                   {isSubmittingLead ? "Sending..." : "Send PDF Report"} <Mail size={24} />
                 </NeoButton>
