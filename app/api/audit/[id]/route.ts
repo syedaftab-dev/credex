@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin, hasSupabaseAdminKey } from "@/lib/supabase";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
 
   if (!hasSupabaseAdminKey || !supabaseAdmin) {
     return NextResponse.json({ error: "No database configured" }, { status: 503 });
