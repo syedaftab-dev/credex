@@ -67,7 +67,7 @@ export default function LandingPage() {
       </section>
 
       {/* MARQUEE */}
-      <div className="bg-[#ccff00] border-y-4 border-black py-6 rotate-[-1deg] scale-105 z-20 relative overflow-hidden">
+      <div className="bg-[#ccff00] border-y-4 border-black py-6 rotate-[-1deg] scale-105 z-20 relative overflow-hidden mt-10">
         <div className="flex whitespace-nowrap animate-marquee">
           {[...Array(10)].map((_, i) => (
             <span key={i} className="text-4xl md:text-5xl font-black uppercase mx-8 flex items-center gap-4">

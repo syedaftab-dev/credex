@@ -5,62 +5,75 @@ import { useParams } from "next/navigation";
 import { NeoCard, NeoButton } from "@/components/ui/NeoBrutalism";
 import { ResultsHero, ToolBreakdownTable } from "@/components/ResultsDisplay";
 import { AuditResult } from "@/lib/audit-engine";
-import { supabase, hasSupabaseKeys } from "@/lib/supabase";
-import { Mail, Share2, Sparkles, AlertTriangle } from "lucide-react";
+import { Mail, Sparkles, AlertTriangle } from "lucide-react";
+
+// Demo fallback used when the database is unavailable
+const DEMO_DATA = {
+  results: {
+    perTool: [
+      {
+        toolId: "cursor", toolName: "Cursor", currentPlanName: "Business",
+        currentMonthlyCost: 400, recommendedPlanId: "pro", recommendedPlanName: "Pro",
+        recommendedMonthlyCost: 200, monthlySavings: 200,
+        reason: "10 users on Business plan but no org-wide features used. Switch to Pro seats.",
+        isRedundant: false
+      },
+      {
+        toolId: "claude", toolName: "Claude", currentPlanName: "Pro",
+        currentMonthlyCost: 200, recommendedPlanId: "pro", recommendedPlanName: "Pro",
+        recommendedMonthlyCost: 0, monthlySavings: 200,
+        reason: "Redundant with ChatGPT Plus for the same team.", isRedundant: true
+      },
+    ],
+    totalCurrentMonthly: 600, totalRecommendedMonthly: 200,
+    totalMonthlySavings: 400, totalAnnualSavings: 4800,
+    showCredex: false, isHealthy: false,
+  },
+  summary: "Your team is currently splitting focus between Claude and ChatGPT, resulting in $2,400 of annual waste. By consolidating on one platform and optimizing your Cursor seats, you can save $4,800 this year.",
+};
 
 export default function ResultsPage() {
   const { id } = useParams();
   const [data, setData] = useState<{ results: AuditResult; summary: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
 
   useEffect(() => {
     async function fetchResult() {
-      if (!hasSupabaseKeys) {
-        // Mock data for demo if no keys
-        setError("Database keys missing. Showing demo data.");
-        setData({
-          results: {
-            perTool: [
-              { toolId: "cursor", toolName: "Cursor", currentPlanName: "Business", currentMonthlyCost: 400, recommendedPlanId: "pro", recommendedPlanName: "Pro", recommendedMonthlyCost: 200, monthlySavings: 200, reason: "10 users on Business plan but no org-wide features used. Switch to Pro seats.", isRedundant: false },
-              { toolId: "claude", toolName: "Claude", currentPlanName: "Pro", currentMonthlyCost: 200, recommendedPlanId: "pro", recommendedPlanName: "Pro", recommendedMonthlyCost: 0, monthlySavings: 200, reason: "Redundant with ChatGPT Plus for the same team.", isRedundant: true },
-            ],
-            totalCurrentMonthly: 600,
-            totalRecommendedMonthly: 200,
-            totalMonthlySavings: 400,
-            totalAnnualSavings: 4800,
-            showCredex: false,
-            isHealthy: false,
-          },
-          summary: "Your team is currently splitting focus between Claude and ChatGPT, resulting in $2,400 of annual waste. By consolidating on one platform and optimizing your Cursor seats, you can save $4,800 this year. We recommend migrating to a unified platform by the end of the month."
-        });
-        setLoading(false);
-        return;
+      // 1️⃣ Check sessionStorage first (populated right after audit submission)
+      const cached = sessionStorage.getItem(`audit_${id}`);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed.results) {
+            setData({ results: parsed.results, summary: parsed.ai_summary });
+            setLoading(false);
+            return;
+          }
+        } catch {}
       }
 
+      // 2️⃣ Fall back to server-side API route (reads from Supabase server-side)
       try {
-        const { data: audit, error } = await supabase
-          .from("audits")
-          .select("*")
-          .eq("id", id)
-          .single();
-
-        if (error) throw error;
+        const res = await fetch(`/api/audit/${id}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const audit = await res.json();
+        if (!audit || !audit.results) throw new Error("Invalid audit data");
         setData({ results: audit.results, summary: audit.ai_summary });
-      } catch (e) {
+      } catch (e: any) {
         console.error("Fetch failed", e);
-        setError("Audit not found.");
+        // 3️⃣ Last resort: show demo data so the page isn't blank
+        setError("Could not load your saved audit (database offline). Showing demo data.");
+        setData(DEMO_DATA as any);
       } finally {
         setLoading(false);
       }
     }
-
     fetchResult();
   }, [id]);
-
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +95,7 @@ export default function ResultsPage() {
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
       <div className="w-16 h-16 border-8 border-black border-t-[#ccff00] rounded-full animate-spin"></div>
-      <h2 className="text-4xl font-black uppercase italic">Analyzing Data...</h2>
+      <h2 className="text-4xl font-black uppercase italic">Loading Results...</h2>
     </div>
   );
 
@@ -118,7 +131,7 @@ export default function ResultsPage() {
             <span className="font-black uppercase text-xl">AI Insights</span>
           </div>
           <p className="text-2xl md:text-3xl font-medium leading-tight italic">
-            "{data.summary}"
+            &ldquo;{data.summary}&rdquo;
           </p>
         </NeoCard>
       </div>
@@ -137,22 +150,16 @@ export default function ResultsPage() {
             <>
               <h2 className="text-5xl md:text-7xl font-black uppercase mb-6">Get the full report.</h2>
               <p className="text-xl opacity-60 mb-12 max-w-xl mx-auto">We'll send a detailed PDF breakdown and a custom savings roadmap to your inbox.</p>
-              
               <form onSubmit={handleLeadSubmit} className="max-w-md mx-auto flex flex-col gap-4">
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email" 
+                  placeholder="Enter your email"
                   className="bg-white border-4 border-[#ccff00] p-5 text-black font-bold rounded-xl focus:outline-none"
                   required
                 />
-                <NeoButton 
-                  variant="lime" 
-                  size="lg" 
-                  type="submit"
-                  disabled={isSubmittingLead}
-                >
+                <NeoButton variant="lime" size="lg" type="submit" disabled={isSubmittingLead}>
                   {isSubmittingLead ? "Sending..." : "Send PDF Report"} <Mail size={24} />
                 </NeoButton>
               </form>

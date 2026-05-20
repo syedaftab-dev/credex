@@ -54,6 +54,12 @@ export function AuditWizard() {
       });
       const data = await res.json();
       if (data.id) {
+        // Cache the full results in sessionStorage so the results page
+        // can display them immediately without a round-trip to Supabase.
+        sessionStorage.setItem(`audit_${data.id}`, JSON.stringify({
+          results: data.results,
+          ai_summary: data.summary,
+        }));
         router.push(`/results/${data.id}`);
       } else {
         console.error("Audit API did not return an ID:", data);
