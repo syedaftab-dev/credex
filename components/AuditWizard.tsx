@@ -55,10 +55,15 @@ export function AuditWizard() {
       const data = await res.json();
       if (data.id) {
         router.push(`/results/${data.id}`);
+      } else {
+        console.error("Audit API did not return an ID:", data);
+        setIsSubmitting(false);
+        alert("Failed to run audit. Please try again.");
       }
     } catch (error) {
       console.error("Audit failed", error);
       setIsSubmitting(false);
+      alert("Network error. Please try again.");
     }
   };
 

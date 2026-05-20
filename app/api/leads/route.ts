@@ -29,26 +29,31 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Save to Supabase
+    // 3. Save to Supabase
     if (hasSupabaseAdminKey && supabaseAdmin) {
-      const { error } = await supabaseAdmin
-        .from("leads")
-        .insert([{
-          email,
-          company,
-          audit_id: auditId,
-          created_at: new Date().toISOString()
-        }]);
-      
-      if (error) throw error;
+      try {
+        const { error } = await supabaseAdmin
+          .from("leads")
+          .insert([{
+            email,
+            company,
+            audit_id: auditId,
+            created_at: new Date().toISOString()
+          }]);
+        
+        if (error) console.error("Leads insert error:", error);
 
-      // Update the audit table to link the email to the audit record
-      const { error: updateError } = await supabaseAdmin
-        .from("audits")
-        .update({ email })
-        .eq("id", auditId);
-      
-      if (updateError) {
-        console.error("Failed to update audit with email:", updateError);
+        // Update the audit table to link the email to the audit record
+        const { error: updateError } = await supabaseAdmin
+          .from("audits")
+          .update({ email })
+          .eq("id", auditId);
+        
+        if (updateError) {
+          console.error("Failed to update audit with email:", updateError);
+        }
+      } catch (dbError) {
+        console.error("Database connection failed for leads insert, but continuing to email:", dbError);
       }
     }
 

@@ -72,18 +72,24 @@ export async function POST(req: NextRequest) {
 
     // 3. Save to Supabase
     if (hasSupabaseAdminKey && supabaseAdmin) {
-      const { error } = await supabaseAdmin
-        .from('audits')
-        .insert([{
-          id,
-          input: entries,
-          results,
-          ai_summary: aiSummary,
-          pricing_snapshot: PRICING_DATA,
-          created_at: new Date().toISOString()
-        }]);
-      
-      if (error) throw error;
+      try {
+        const { error } = await supabaseAdmin
+          .from('audits')
+          .insert([{
+            id,
+            input: entries,
+            results,
+            ai_summary: aiSummary,
+            pricing_snapshot: PRICING_DATA,
+            created_at: new Date().toISOString()
+          }]);
+        
+        if (error) {
+          console.error("Supabase insert error:", error);
+        }
+      } catch (dbError) {
+        console.error("Database connection failed, but proceeding locally:", dbError);
+      }
     } else {
       console.warn("Supabase keys missing. Audit not persisted.");
       // In a real dev environment, we might use a local DB or just mock it.
