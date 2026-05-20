@@ -73,18 +73,24 @@ export async function POST(req: NextRequest) {
       console.error("Unsubscribes table fetch failed (may not exist yet):", e);
     }
 
-    // 5. Fetch audits
-    const { data: audits, error: auditsError } = await supabaseAdmin
-      .from("audits")
-      .select("*")
-      .not("email", "is", null);
+    // 5. Fetch audits that have linked emails
+    let audits: any[] = [];
+    try {
+      const { data: auditData, error: auditsError } = await supabaseAdmin
+        .from("audits")
+        .select("*")
+        .not("email", "is", null);
 
-    if (auditsError) {
-      console.error("Failed to fetch audits:", auditsError);
-      return NextResponse.json({ error: "Failed to fetch audits" }, { status: 500 });
+      if (auditsError) {
+        console.error("Failed to fetch audits:", auditsError);
+      } else {
+        audits = auditData || [];
+      }
+    } catch (e) {
+      console.error("Audits table fetch failed:", e);
     }
 
-    console.log(`Found ${audits?.length || 0} audits with emails to check.`);
+    console.log(`Found ${audits.length} audits with emails to check.`);
 
     // 6. Run change detection logic
     const affectedAuditsGrouped: Record<string, Array<{

@@ -4,15 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ResultsHero, ToolBreakdownTable } from "@/components/ResultsDisplay";
 import { AuditResult } from "@/lib/audit-engine";
-import { supabase, hasSupabaseKeys } from "@/lib/supabase";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { NeoCard, NeoButton, NeoBadge } from "@/components/ui/NeoBrutalism";
 import Link from "next/link";
-import Head from "next/head";
-
-// This is a client component, so we can't export metadata directly in Next.js 15 App Router easily if it's 'use client'
-// But we can use a separate layout or just keep it simple.
-// For now, I'll add the Head tags for the browser to pick up.
 
 export default function SharePage() {
   const { id } = useParams();
@@ -21,43 +15,20 @@ export default function SharePage() {
 
   useEffect(() => {
     async function fetchResult() {
-      if (!hasSupabaseKeys || id === "demo-audit") {
-        // Mock data for demo if no keys or demo requested
-        setData({
-          results: {
-            perTool: [
-              { toolId: "cursor", toolName: "Cursor", currentPlanName: "Business", currentMonthlyCost: 400, recommendedPlanId: "pro", recommendedPlanName: "Pro", recommendedMonthlyCost: 200, monthlySavings: 200, reason: "Optimized per-seat costs.", isRedundant: false },
-              { toolId: "claude", toolName: "Claude", currentPlanName: "Pro", currentMonthlyCost: 200, recommendedPlanId: "pro", recommendedPlanName: "Pro", recommendedMonthlyCost: 0, monthlySavings: 200, reason: "Redundancy found.", isRedundant: true },
-            ],
-            totalCurrentMonthly: 600,
-            totalRecommendedMonthly: 200,
-            totalMonthlySavings: 400,
-            totalAnnualSavings: 4800,
-            showCredex: false,
-            isHealthy: false,
-          },
-          summary: "This team could save $4,800/year by consolidating redundant LLM subscriptions and right-sizing their AI dev environment."
-        });
-        setLoading(false);
-        return;
-      }
-
+      // Always use server-side API route — avoids browser DNS failures with Supabase
       try {
-        const { data: audit, error } = await supabase
-          .from("audits")
-          .select("*")
-          .eq("id", id)
-          .single();
-
-        if (error) throw error;
+        const res = await fetch(`/api/audit/${id}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const audit = await res.json();
+        if (!audit || !audit.results) throw new Error("Invalid");
         setData({ results: audit.results, summary: audit.ai_summary });
       } catch (e) {
-        console.error("Fetch failed", e);
+        console.error("Share fetch failed", e);
+        setData(null);
       } finally {
         setLoading(false);
       }
     }
-
     fetchResult();
   }, [id]);
 
