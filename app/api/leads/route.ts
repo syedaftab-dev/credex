@@ -40,6 +40,16 @@ export async function POST(req: NextRequest) {
         }]);
       
       if (error) throw error;
+
+      // Update the audit table to link the email to the audit record
+      const { error: updateError } = await supabaseAdmin
+        .from("audits")
+        .update({ email })
+        .eq("id", auditId);
+      
+      if (updateError) {
+        console.error("Failed to update audit with email:", updateError);
+      }
     }
 
     // 4. Send Transactional Email via Nodemailer

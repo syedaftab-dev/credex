@@ -3,8 +3,8 @@ import { runAudit, ToolEntry } from "@/lib/audit-engine";
 import { nanoid } from "nanoid";
 import { supabaseAdmin, hasSupabaseAdminKey } from "@/lib/supabase";
 import Anthropic from "@anthropic-ai/sdk";
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { PRICING_DATA } from "@/lib/pricing";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || "");
 const anthropic = new Anthropic({
@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
           input: entries,
           results,
           ai_summary: aiSummary,
+          pricing_snapshot: PRICING_DATA,
           created_at: new Date().toISOString()
         }]);
       

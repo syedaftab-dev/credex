@@ -31,7 +31,8 @@ export interface AuditResult {
   isHealthy: boolean; // Savings < $100/mo
 }
 
-export function runAudit(entries: ToolEntry[]): AuditResult {
+export function runAudit(entries: ToolEntry[], customPricing?: Record<string, ToolPricing>): AuditResult {
+  const pricing = customPricing || PRICING_DATA;
   const perTool: ToolAuditResult[] = [];
   let totalCurrentMonthly = 0;
 
@@ -39,7 +40,7 @@ export function runAudit(entries: ToolEntry[]): AuditResult {
   const useCaseMap: Record<string, string[]> = {};
 
   entries.forEach((entry) => {
-    const tool = PRICING_DATA[entry.toolId];
+    const tool = pricing[entry.toolId];
     if (!tool) return;
 
     totalCurrentMonthly += entry.monthlySpend;
@@ -51,7 +52,7 @@ export function runAudit(entries: ToolEntry[]): AuditResult {
   });
 
   entries.forEach((entry) => {
-    const tool = PRICING_DATA[entry.toolId];
+    const tool = pricing[entry.toolId];
     if (!tool) return;
 
     const currentPlan = tool.plans.find((p) => p.id === entry.planId);

@@ -1,3 +1,5 @@
+import { supabaseAdmin, hasSupabaseAdminKey } from './supabase';
+
 /**
  * Pricing Data for AI Spend Audit Tool
  * Verified as of May 2026
@@ -110,3 +112,29 @@ export const API_PRICING = {
     ]
   }
 };
+
+export async function getMergedPricing(): Promise<Record<string, ToolPricing>> {
+  const merged: Record<string, ToolPricing> = JSON.parse(JSON.stringify(PRICING_DATA));
+  if (hasSupabaseAdminKey && supabaseAdmin) {
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('pricing_overrides')
+        .select('*');
+      
+      if (!error && data && data.length > 0) {
+        data.forEach((override: any) => {
+          const tool = merged[override.tool_id];
+          if (tool) {
+            const plan = tool.plans.find((p: any) => p.id === override.plan_id);
+            if (plan) {
+              plan.priceMonthly = Number(override.price_monthly);
+            }
+          }
+        });
+      }
+    } catch (e) {
+      console.error("Failed to fetch pricing overrides:", e);
+    }
+  }
+  return merged;
+}
