@@ -138,6 +138,25 @@ export default function ResultsPage() {
 
       <ToolBreakdownTable result={data.results} />
 
+      {/* RE-AUDIT BANNER — Feature 6: discoverable entry point for pricing diff view */}
+      <div className="mt-16 no-print">
+        <div className="border-4 border-black bg-[#ccff00] rounded-2xl p-8 shadow-[8px_8px_0px_0px_#000] flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest mb-1 opacity-60">NEW — Round 2 Feature</p>
+            <h3 className="text-3xl font-black uppercase">Pricing Changed?</h3>
+            <p className="mt-2 font-bold text-lg max-w-md">
+              AI tool prices change fast. Click below to re-run your audit with the latest pricing and see exactly what changed.
+            </p>
+          </div>
+          <a
+            href={`/re-audit/${id}`}
+            className="flex-shrink-0 bg-black text-[#ccff00] font-black uppercase text-lg px-8 py-4 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#333] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_#333] transition-all"
+          >
+            Compare Old vs New →
+          </a>
+        </div>
+      </div>
+
       {/* LEAD CAPTURE SECTION */}
       <div className="mt-24 text-center lead-capture-section no-print">
         <NeoCard color="bg-black" className="text-white py-16">

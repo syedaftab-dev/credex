@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { NeoCard, NeoBadge, NeoButton } from "@/components/ui/NeoBrutalism";
 import { AuditResult, ToolAuditResult, runAudit } from "@/lib/audit-engine";
-import { supabase, hasSupabaseKeys } from "@/lib/supabase";
 import { RefreshCw, ArrowRight, CheckCircle2, AlertTriangle, Sparkles, Sliders, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 
@@ -31,29 +30,14 @@ export default function ReAuditPage() {
         setLoading(true);
         let auditData: any = null;
 
-        // 1. Fetch Audit Data (with Mock fallback)
-        if (!hasSupabaseKeys || id === "demo-audit") {
-          setError("Database keys missing or demo ID. Showing demo re-audit.");
-          
-          // Create a mock original pricing snapshot where Cursor Pro was $20
+        // 1. Fetch Audit Data — sessionStorage first, then API, then demo fallback
+        if (id === "demo-audit") {
+          // Demo mode: intentional mock
+          setError("Showing demo re-audit comparison.");
           const mockSnapshot = {
-            cursor: {
-              id: 'cursor',
-              name: 'Cursor',
-              plans: [
-                { id: 'pro', name: 'Pro', priceMonthly: 20, type: 'individual' },
-                { id: 'teams', name: 'Business', priceMonthly: 40, type: 'team' }
-              ]
-            },
-            claude: {
-              id: 'claude',
-              name: 'Claude',
-              plans: [
-                { id: 'pro', name: 'Pro', priceMonthly: 20, type: 'individual' }
-              ]
-            }
+            cursor: { id: 'cursor', name: 'Cursor', plans: [{ id: 'pro', name: 'Pro', priceMonthly: 20, type: 'individual' }, { id: 'teams', name: 'Business', priceMonthly: 40, type: 'team' }] },
+            claude: { id: 'claude', name: 'Claude', plans: [{ id: 'pro', name: 'Pro', priceMonthly: 20, type: 'individual' }] }
           };
-
           auditData = {
             input: [
               { toolId: "cursor", planId: "teams", seats: 10, monthlySpend: 400, useCase: "coding" },
@@ -64,26 +48,39 @@ export default function ReAuditPage() {
                 { toolId: "cursor", toolName: "Cursor", currentPlanName: "Business", currentMonthlyCost: 400, recommendedPlanId: "pro", recommendedPlanName: "Pro", recommendedMonthlyCost: 200, monthlySavings: 200, reason: "10 users on Business plan but no org-wide features used. Switch to Pro seats.", isRedundant: false },
                 { toolId: "claude", toolName: "Claude", currentPlanName: "Pro", currentMonthlyCost: 200, recommendedPlanId: "pro", recommendedPlanName: "Pro", recommendedMonthlyCost: 0, monthlySavings: 200, reason: "Redundant with Cursor for same use cases.", isRedundant: true }
               ],
-              totalCurrentMonthly: 600,
-              totalRecommendedMonthly: 200,
-              totalMonthlySavings: 400,
-              totalAnnualSavings: 4800,
-              showCredex: false,
-              isHealthy: false
+              totalCurrentMonthly: 600, totalRecommendedMonthly: 200,
+              totalMonthlySavings: 400, totalAnnualSavings: 4800,
+              showCredex: false, isHealthy: false
             },
             pricing_snapshot: mockSnapshot,
             ai_summary: "Initial audit suggests consolidating Claude and migrating Cursor seats to Pro, yielding $4,800/yr savings.",
             email: "founder@startup.io"
           };
         } else {
-          const { data: audit, error: fetchError } = await supabase
-            .from("audits")
-            .select("*")
-            .eq("id", id)
-            .single();
+          // Try sessionStorage first (populated immediately after wizard submit)
+          const cached = sessionStorage.getItem(`audit_${id}`);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            // sessionStorage stores { results, ai_summary } — we need input too
+            // The wizard also caches input separately
+            const cachedInput = sessionStorage.getItem(`audit_input_${id}`);
+            if (parsed.results && cachedInput) {
+              auditData = {
+                input: JSON.parse(cachedInput),
+                results: parsed.results,
+                pricing_snapshot: null, // will use live pricing for comparison
+                ai_summary: parsed.ai_summary,
+                email: null
+              };
+            }
+          }
 
-          if (fetchError) throw fetchError;
-          auditData = audit;
+          // Fall back to server-side API if sessionStorage didn't have it
+          if (!auditData) {
+            const res = await fetch(`/api/audit/${id}`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            auditData = await res.json();
+          }
         }
 
         // 2. Fetch latest pricing from API
