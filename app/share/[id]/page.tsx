@@ -7,6 +7,7 @@ import { AuditResult } from "@/lib/audit-engine";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { NeoCard, NeoButton, NeoBadge } from "@/components/ui/NeoBrutalism";
 import Link from "next/link";
+import { hasSupabaseKeys } from "@/lib/supabase";
 
 export default function SharePage() {
   const { id } = useParams();
@@ -15,6 +16,28 @@ export default function SharePage() {
 
   useEffect(() => {
     async function fetchResult() {
+      if (!id) return;
+
+      if (!hasSupabaseKeys || id === "demo-audit") {
+        setData({
+          results: {
+            perTool: [
+              { toolId: "cursor", toolName: "Cursor", currentPlanName: "Business", currentMonthlyCost: 400, recommendedPlanId: "pro", recommendedPlanName: "Pro", recommendedMonthlyCost: 200, monthlySavings: 200, reason: "Optimized per-seat costs.", isRedundant: false },
+              { toolId: "claude", toolName: "Claude", currentPlanName: "Pro", currentMonthlyCost: 200, recommendedPlanId: "pro", recommendedPlanName: "Pro", recommendedMonthlyCost: 0, monthlySavings: 200, reason: "Redundancy found.", isRedundant: true },
+            ],
+            totalCurrentMonthly: 600,
+            totalRecommendedMonthly: 200,
+            totalMonthlySavings: 400,
+            totalAnnualSavings: 4800,
+            showCredex: false,
+            isHealthy: false,
+          },
+          summary: "This team could save $4,800/year by consolidating redundant LLM subscriptions and right-sizing their AI dev environment."
+        });
+        setLoading(false);
+        return;
+      }
+
       // Always use server-side API route — avoids browser DNS failures with Supabase
       try {
         const res = await fetch(`/api/audit/${id}`);

@@ -49,28 +49,28 @@
 **Blockers:** None.
 **Plan for tomorrow:** Launch on Product Hunt.
 
-## Day 8 — 2026-05-08
+## Day 8 â€” 2026-05-08
 **Hours worked:** 5
 **What I did:** Launched on Product Hunt. Monitored initial traffic and fixed two high-priority UI bugs related to mobile overflow.
 **What I learned:** Mobile users interact with the audit wizard differently; simplified the range slider for better touch precision.
 **Blockers:** None.
 **Plan for tomorrow:** Address user feedback and refine the AI summary logic.
 
-## Day 9 — 2026-05-09
+## Day 9 â€” 2026-05-09
 **Hours worked:** 4
 **What I did:** Refined the AI summary prompt to provide more actionable cost-saving tips. Improved SEO meta tags for better social sharing.
 **What I learned:** Providing specific dollar amounts in the AI summary increases user retention on the results page.
 **Blockers:** None.
 **Plan for tomorrow:** Optimize performance for larger data sets.
 
-## Day 10 — 2026-05-10
+## Day 10 â€” 2026-05-10
 **Hours worked:** 5
 **What I did:** Implemented client-side caching for pricing data to reduce API calls. Updated the Neo-Brutalist theme with subtle micro-animations.
 **What I learned:** Framer Motion makes even simple scale transitions feel much more premium.
 **Blockers:** Minor hydration mismatch in the wizard component.
 **Plan for tomorrow:** Final beta testing and public launch.
 
-## Day 11 — 2026-05-11
+## Day 11 â€” 2026-05-11
 **Hours worked:** 6
 **What I did:** Completed the final pass of documentation. Verified all API endpoints and Supabase integrations. Prepared for the first wave of public beta users.
 **What I learned:** Documentation is never truly finished; user feedback on the "How it works" section led to a complete rewrite for clarity.
