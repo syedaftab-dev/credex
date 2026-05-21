@@ -54,11 +54,23 @@ export function AuditWizard() {
       });
       const data = await res.json();
       if (data.id) {
+        // Cache the full results AND the original entries in sessionStorage
+        // so the results page and re-audit page can work without Supabase
+        sessionStorage.setItem(`audit_${data.id}`, JSON.stringify({
+          results: data.results,
+          ai_summary: data.summary,
+        }));
+        sessionStorage.setItem(`audit_input_${data.id}`, JSON.stringify(entries));
         router.push(`/results/${data.id}`);
+      } else {
+        console.error("Audit API did not return an ID:", data);
+        setIsSubmitting(false);
+        alert("Failed to run audit. Please try again.");
       }
     } catch (error) {
       console.error("Audit failed", error);
       setIsSubmitting(false);
+      alert("Network error. Please try again.");
     }
   };
 

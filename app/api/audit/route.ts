@@ -3,8 +3,8 @@ import { runAudit, ToolEntry } from "@/lib/audit-engine";
 import { nanoid } from "nanoid";
 import { supabaseAdmin, hasSupabaseAdminKey } from "@/lib/supabase";
 import Anthropic from "@anthropic-ai/sdk";
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { PRICING_DATA } from "@/lib/pricing";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || "");
 const anthropic = new Anthropic({
@@ -31,15 +31,15 @@ export async function POST(req: NextRequest) {
 
     if (process.env.GOOGLE_AI_API_KEY) {
       try {
-        console.log("Attempting Gemini 1.5 Flash...");
-        let model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        console.log("Attempting Gemini 2.0 Flash...");
+        let model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
         try {
           const result = await model.generateContent(prompt);
           aiSummary = result.response.text();
         } catch (innerError: any) {
           if (innerError.message?.includes("404") || innerError.message?.includes("not found")) {
-            console.log("Gemini 1.5 Flash not found, falling back to Gemini 1.0 Pro...");
-            model = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
+            console.log("Gemini 2.0 Flash not found, falling back to gemini-1.5-flash...");
+            model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
             const result = await model.generateContent(prompt);
             aiSummary = result.response.text();
           } else {
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
         }
         console.log("Gemini Summary Generated");
       } catch (e: any) {
-        console.error("Gemini Multi-Model failed:", e.message || e);
+        console.error("Gemini failed:", e.message || e);
       }
     } 
     
@@ -72,17 +72,24 @@ export async function POST(req: NextRequest) {
 
     // 3. Save to Supabase
     if (hasSupabaseAdminKey && supabaseAdmin) {
-      const { error } = await supabaseAdmin
-        .from('audits')
-        .insert([{
-          id,
-          input: entries,
-          results,
-          ai_summary: aiSummary,
-          created_at: new Date().toISOString()
-        }]);
-      
-      if (error) throw error;
+      try {
+        const { error } = await supabaseAdmin
+          .from('audits')
+          .insert([{
+            id,
+            input: entries,
+            results,
+            ai_summary: aiSummary,
+            pricing_snapshot: PRICING_DATA,
+            created_at: new Date().toISOString()
+          }]);
+        
+        if (error) {
+          console.error("Supabase insert error:", error);
+        }
+      } catch (dbError) {
+        console.error("Database connection failed, but proceeding locally:", dbError);
+      }
     } else {
       console.warn("Supabase keys missing. Audit not persisted.");
       // In a real dev environment, we might use a local DB or just mock it.

@@ -51,7 +51,7 @@ export function ResultsHero({ result }: { result: AuditResult }) {
               <h3 className="text-4xl font-black uppercase tracking-tighter">Massive Savings Opportunity</h3>
               <p className="text-xl font-medium italic">You're losing over $500/mo. Credex can help you secure bulk credits and enterprise discounts at 30-50% off.</p>
             </div>
-            <a href="https://credex.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://credex.rocks" target="_blank" rel="noopener noreferrer">
               <NeoButton variant="lime" size="lg">
                 Talk to Credex <ArrowRight size={24} />
               </NeoButton>

@@ -57,7 +57,7 @@ export default function RootLayout({
           <div className="mt-10 w-full flex flex-col md:flex-row justify-between items-center gap-4 font-bold uppercase text-sm">
             <span>© 2026 CredX AI Spend Audit.</span>
             <div className="flex gap-4">
-              <a href="https://credex.com" className="hover:underline text-black">Credex Main Site</a>
+              <a href="https://credex.rocks/" className="hover:underline text-black">Credex Main Site</a>
             </div>
           </div>
         </footer>

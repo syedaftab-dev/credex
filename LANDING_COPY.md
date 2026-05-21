@@ -1,9 +1,9 @@
 # LANDING_COPY.md
 
-## Hero Headline (≤10 words)
+## Hero Headline (Under 10 words)
 Stop Burning Cash on AI Subscriptions. Audit Now.
 
-## Subheadline (≤25 words)
+## Subheadline (Under 25 words)
 Identify redundant Cursor, Claude, and ChatGPT seats in 2 minutes. Get a defensible savings roadmap for your startup today.
 
 ## Primary CTA
